@@ -4,7 +4,7 @@ import io.github.pikokr.bucket.plugin.loader.BucketPluginLoader
 import java.io.File
 
 internal class BucketPluginManager {
-    companion object {
+    companion object Extension {
         private lateinit var manager: BucketPluginManager
 
         internal var BucketPlugin.isEnabled: Boolean
@@ -26,7 +26,7 @@ internal class BucketPluginManager {
         manager = this
     }
 
-    private val loader = BucketPluginLoader(this)
+    private val loader = BucketPluginLoader()
     private val _plugins = ArrayList<BucketPlugin>()
     private val enabled = HashMap<BucketPlugin, Boolean>()
 

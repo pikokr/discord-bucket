@@ -6,14 +6,13 @@ import com.charleskorn.kaml.YamlConfiguration
 import io.github.pikokr.bucket.exception.InvalidPluginException
 import io.github.pikokr.bucket.plugin.BucketPlugin
 import io.github.pikokr.bucket.plugin.BucketPluginDescription
-import io.github.pikokr.bucket.plugin.BucketPluginManager
-import io.github.pikokr.bucket.plugin.BucketPluginManager.Companion.isEnabled
+import io.github.pikokr.bucket.plugin.BucketPluginManager.Extension.isEnabled
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.jar.JarFile
 
-internal class BucketPluginLoader(private val pluginManager: BucketPluginManager) {
+internal class BucketPluginLoader {
     private val loaders = CopyOnWriteArrayList<BucketClassLoader>()
     private val yaml by lazy {
         Yaml(configuration = YamlConfiguration(
@@ -29,19 +28,17 @@ internal class BucketPluginLoader(private val pluginManager: BucketPluginManager
 
         val description = file.pluginDescription
 
-        val loader = BucketClassLoader(this, this::class.java.classLoader, description, file)
+        val loader = BucketClassLoader(this::class.java.classLoader, description, file)
         loaders.add(loader)
         return loader.plugin
     }
 
     fun unloadPlugin(plugin: BucketPlugin) {
-        if (plugin.isEnabled) {
-            plugin.isEnabled = false
+        plugin.isEnabled = false
 
-            val loader = plugin::class.java.classLoader as BucketClassLoader
-            loaders.remove(loader)
-            loader.close()
-        }
+        val loader = plugin::class.java.classLoader as BucketClassLoader
+        loaders.remove(loader)
+        loader.close()
     }
 
     private val File.pluginDescription: BucketPluginDescription
