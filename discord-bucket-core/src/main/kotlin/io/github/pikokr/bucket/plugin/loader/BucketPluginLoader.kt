@@ -39,6 +39,8 @@ internal class BucketPluginLoader(private val pluginManager: BucketPluginManager
             plugin.isEnabled = false
 
             val loader = plugin::class.java.classLoader as BucketClassLoader
+            loaders.remove(loader)
+            loader.close()
         }
     }
 

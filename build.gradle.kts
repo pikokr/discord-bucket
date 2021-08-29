@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.5.30"
+    kotlin("plugin.serialization") version "1.5.30"
 }
 
 group = "io.github.pikokr"
@@ -15,6 +16,7 @@ version = "1.0-SNAPSHOT"
 
 allprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
 
     repositories {
         mavenCentral()
@@ -25,5 +27,6 @@ allprojects {
     dependencies {
         implementation(kotlin("stdlib-jdk8"))
         implementation("dev.kord:kord-core:0.8.0-M5")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.2.2")
     }
 }
