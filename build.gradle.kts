@@ -26,7 +26,7 @@ allprojects {
 
     dependencies {
         implementation(kotlin("stdlib-jdk8"))
-        implementation("dev.kord:kord-core:0.8.0-M5")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.2.2")
+        implementation("dev.kord:kord-core:0.8.0-M5")
     }
 }

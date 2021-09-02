@@ -6,7 +6,7 @@ import com.charleskorn.kaml.YamlConfiguration
 import io.github.pikokr.bucket.exception.InvalidPluginException
 import io.github.pikokr.bucket.plugin.BucketPlugin
 import io.github.pikokr.bucket.plugin.BucketPluginDescription
-import io.github.pikokr.bucket.plugin.BucketPluginManager.Extension.isEnabled
+import io.github.pikokr.bucket.plugin.BucketPluginManagerImpl.Extension.isEnabled
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.concurrent.CopyOnWriteArrayList

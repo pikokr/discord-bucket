@@ -3,9 +3,9 @@ package io.github.pikokr.bucket.plugin
 import io.github.pikokr.bucket.plugin.loader.BucketPluginLoader
 import java.io.File
 
-internal class BucketPluginManager {
+internal class BucketPluginManagerImpl : BucketPluginManager {
     companion object Extension {
-        private lateinit var manager: BucketPluginManager
+        private lateinit var manager: BucketPluginManagerImpl
 
         internal var BucketPlugin.isEnabled: Boolean
             get() = manager.enabled[this] ?: false
@@ -33,7 +33,7 @@ internal class BucketPluginManager {
     internal val plugins: Array<BucketPlugin>
         get() = _plugins.toTypedArray()
 
-    internal fun loadPlugins(directory: File): List<BucketPlugin> {
+    override fun loadPlugins(directory: File): List<BucketPlugin> {
         val updateDirectory = File(directory, "update")
         val checkUpdates = updateDirectory.exists() && updateDirectory.isDirectory
         return (directory.listFiles { file ->
@@ -60,19 +60,19 @@ internal class BucketPluginManager {
         }
     }
 
-    internal fun enablePlugins() {
+    override fun enablePlugins() {
         _plugins.forEach { plugin ->
             plugin.isEnabled = true
         }
     }
 
-    internal fun disablePlugins() {
+    override fun disablePlugins() {
         _plugins.forEach { plugin ->
             plugin.isEnabled = false
         }
     }
 
-    internal fun unloadPlugins() {
+    override fun unloadPlugins() {
         _plugins.forEach { plugin ->
             if (plugin.isEnabled) {
                 loader.unloadPlugin(plugin)
