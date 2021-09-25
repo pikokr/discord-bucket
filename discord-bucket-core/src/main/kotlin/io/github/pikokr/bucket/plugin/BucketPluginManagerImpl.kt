@@ -30,10 +30,10 @@ internal class BucketPluginManagerImpl : BucketPluginManager {
     private val _plugins = ArrayList<BucketPlugin>()
     private val enabled = HashMap<BucketPlugin, Boolean>()
 
-    internal val plugins: Array<BucketPlugin>
+    override val plugins: Array<BucketPlugin>
         get() = _plugins.toTypedArray()
 
-    override fun loadPlugins(directory: File): List<BucketPlugin> {
+    override fun loadPlugins(directory: File): Array<BucketPlugin> {
         val updateDirectory = File(directory, "update")
         val checkUpdates = updateDirectory.exists() && updateDirectory.isDirectory
         return (directory.listFiles { file ->
@@ -57,7 +57,7 @@ internal class BucketPluginManagerImpl : BucketPluginManager {
         }.also { list ->
             println("Loaded ${list.size} plugins")
             println()
-        }
+        }.toTypedArray()
     }
 
     override fun enablePlugins() {
