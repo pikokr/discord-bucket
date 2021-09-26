@@ -12,6 +12,8 @@ import dev.kord.gateway.PrivilegedIntent
 import io.github.pikokr.bucket.config.BucketServerConfig
 import io.github.pikokr.bucket.plugin.BucketPluginManager
 import io.github.pikokr.bucket.plugin.BucketPluginManagerImpl
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -19,13 +21,16 @@ class BucketImpl : Bucket() {
     override val pluginManager: BucketPluginManager
         get() = internalPluginManager
 
+    internal val logger: Logger
+        get() = internalLogger
+
     companion object {
         @PrivilegedIntent
         @JvmStatic
         suspend fun main(args: Array<String>) {
-            require(!::kord.isInitialized) { "Already initialized" }
+            require(!::bucket.isInitialized) { "Already initialized" }
 
-            val bucket = BucketImpl()
+            bucket = BucketImpl()
             setImplementation(bucket)
 
             kord = Kord(config.bot.token) {
@@ -43,7 +48,7 @@ class BucketImpl : Bucket() {
 
             kord.on<ReadyEvent> {
                 val self = kord.getSelf()
-                println("Bot logged in as ${self.tag} (${self.id})")
+                internalLogger.info("Bot logged in as ${self.tag} (${self.id})")
             }
 
             runCatching {
@@ -53,7 +58,13 @@ class BucketImpl : Bucket() {
             }
         }
 
+        private lateinit var bucket: BucketImpl
+
         private lateinit var kord: Kord
+
+        private val internalLogger = LoggerFactory.getLogger(this::class.java)
+
+        private val internalPluginManager = BucketPluginManagerImpl(bucket)
 
         private val yaml by lazy {
             Yaml(
@@ -70,7 +81,7 @@ class BucketImpl : Bucket() {
                 val config = BucketServerConfig()
                 val content = yaml.encodeToString(BucketServerConfig.serializer(), config)
                 configFile.writeText(content)
-                println("Server configuration file created. Please edit configuration and re-run.")
+                internalLogger.warn("Server configuration file created. Please edit configuration and re-run.")
                 exitProcess(1)
             }
             val data = yaml.decodeFromStream(BucketServerConfig.serializer(), configFile.inputStream())
@@ -78,7 +89,5 @@ class BucketImpl : Bucket() {
             configFile.writeText(content)
             data
         }
-
-        internal val internalPluginManager = BucketPluginManagerImpl()
     }
 }

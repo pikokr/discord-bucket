@@ -6,9 +6,9 @@ import io.github.pikokr.bucket.plugin.BucketPluginDescription
 import java.io.File
 import java.net.URLClassLoader
 
-internal class BucketClassLoader(
+class BucketClassLoader internal constructor(
     parent: ClassLoader? = null,
-    private val description: BucketPluginDescription,
+    val description: BucketPluginDescription,
     file: File
 ): URLClassLoader(arrayOf(file.toURI().toURL()), parent) {
     internal val plugin = runCatching {
