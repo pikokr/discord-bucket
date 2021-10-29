@@ -15,4 +15,8 @@ tasks {
             attributes("Main-Class" to "io.github.pikokr.bucket.BucketImpl")
         }
     }
+
+    build {
+        dependsOn(project.tasks.withType<ShadowJar>())
+    }
 }
