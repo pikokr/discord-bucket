@@ -12,8 +12,9 @@ import java.io.FileNotFoundException
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.jar.JarFile
 
-internal class BucketPluginLoader {
+object BucketPluginLoader {
     private val loaders = CopyOnWriteArrayList<BucketClassLoader>()
+    private val loaderCache = hashMapOf<BucketPlugin, BucketClassLoader>()
     private val yaml by lazy {
         Yaml(configuration = YamlConfiguration(
             strictMode = false,
@@ -30,16 +31,23 @@ internal class BucketPluginLoader {
 
         val loader = BucketClassLoader(this::class.java.classLoader, description, file)
         loaders.add(loader)
+        loaderCache[loader.plugin] = loader
         return loader.plugin
     }
 
     fun unloadPlugin(plugin: BucketPlugin) {
         plugin.isEnabled = false
 
-        val loader = plugin::class.java.classLoader as BucketClassLoader
+        val loader = plugin.loader
         loaders.remove(loader)
+        loaderCache.remove(plugin)
         loader.close()
     }
+
+    val BucketPlugin.loader: BucketClassLoader
+        get() = loaderCache[this] ?: (this::class.java.classLoader as BucketClassLoader).also { loader ->
+            loaderCache[this] = loader
+        }
 
     private val File.pluginDescription: BucketPluginDescription
         get() {
